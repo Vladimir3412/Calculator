@@ -24,6 +24,9 @@ const Calculator = () => {
     "0",
     "Равно",
   ];
+
+  const [history, setHistory] = useState([]); // хранение истории вычислений
+
   // Состояние для контроля отображения стиля результата.
   // false — не отображаем ввод, true — отображаем результат крупно
   const [showResult, setShowResult] = useState(false);
@@ -31,6 +34,7 @@ const Calculator = () => {
   // Состояние, хранящее текущую строку ввода калькулятора
   const [display, setDisplay] = useState("");
   const maxLimit = 15;
+  const maxHistory = 5;
 
   // Функция для вычисления результата на основе текущего ввода
   function calculateResult() {
@@ -41,6 +45,13 @@ const Calculator = () => {
 
         // Округляем результат до 3 знаков после запятой и делаем числом
         calcResult = parseFloat(calcResult.toFixed(3));
+
+        const historyEntry = `${display} = ${calcResult}`;
+        // Добавляем запись в историю вычислений
+        setHistory((prev) => {
+          const updatedHistory = [...prev, historyEntry];
+          return updatedHistory.slice(0, maxHistory);
+        });
 
         // Выводим результат на экран калькулятора
         setDisplay(calcResult);
@@ -96,6 +107,18 @@ const Calculator = () => {
   return (
     // Главный компонент калькулятора
     <div className="min-w-[320px] bg-black flex flex-col gap-4 p-4 rounded-2xl">
+      {history.length > 0 && (
+        <div className="bg-[#1f1f1f] text-white rounded-lg p-3 mb-4 max-h-[150px] overflow-y-auto shadow-inner">
+          <h2 className="text-sm text-gray-400 mb-2">История вычислений:</h2>
+          <ul className="space-y-1 text-sm">
+            {history.map((entry, index) => (
+              <li key={index} className="text-gray-300">
+                {entry}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div
         className="overflow-x-auto bg-[#141414] min-h-[100px] 
     flex items-end justify-end flex-col p-4 rounded-[10px]"
